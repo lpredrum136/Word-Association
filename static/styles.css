@@ -1,0 +1,49 @@
+.list-group {
+    /*overflow: scroll;*/
+    white-space: nowrap;
+}
+
+#mynetwork {
+    width: 100%;
+    height: 400px;
+    /*border: 1px solid lightgray;*/
+}
+
+body, html {
+    height: 100%;
+}
+ 
+.bg {
+    /* The image used */
+    background-image: url("/static/pexels-photo-1439615.jpeg");
+      
+    /* Full height */
+    height: 100%;
+  
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    text-align: center;
+    
+
+    /* Center the search box */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/*form[method=get] {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}*/
+
+#cover-caption {
+    width: 100%;
+}
+
+#frontPage {
+    text-shadow: 2px 2px black;
+}

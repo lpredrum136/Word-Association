@@ -1,0 +1,201 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+    <nav class="navbar navbar-expand-sm bg-primary navbar-dark sticky-top mb-2 py-0"><!-- A grey horizontal navbar that becomes vertical on small screens -->
+        <!-- Brand/logo -->
+        <a class="navbar-brand" href="https://www.qut.edu.au/">
+            <img src="/static/qut.png" alt="QUT" style="width: 40px;">
+        </a>
+        <!--Toggler/Collapsible button-->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <!--Navbar Links-->
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/aboutUs">About the Project</a>
+                </li>
+                
+            </ul>
+        </div>
+        <!--Navbar form-->
+        <form class="form-inline" action="/synonyms" method="GET">
+            <input class="form-control mr-sm-2" type="text" name="word" placeholder="Enter a word">
+            <button class="btn btn-success" type="submit">Search</button>
+        </form>
+    </nav>
+
+    <!--The word-->
+    <div class="d-flex justify-content-center">
+        <div class="p-2 bg-white"><h1><strong>{{ word }}</strong></h1></div>
+    </div>
+    
+    <!--Choose view-->
+    <div class="d-flex justify-content-center">
+        <form class="form-inline">
+            <div class="custom-control custom-checkbox mr-3">
+                <input type="checkbox" class="custom-control-input" id="classic" name="classic" checked>
+                <label class="custom-control-label" for="classic">Classic View</label>
+            </div>
+            <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="network" name="network">
+                <label class="custom-control-label" for="network">Network View</label>
+            </div>
+        </form>
+    </div>
+     
+
+    <!--Main part-->
+    
+    <div class="d-flex justify-content-center mt-3 mb-1">
+        <a class="btn btn-primary" data-toggle="collapse" href="#synonyms" style="width: 500px;"><h4>Synonyms</h4></a>
+    </div>
+    
+    <div id="synonyms" class="panel-collapse collapse">
+        <strong>{{ error }}</strong>
+    </div>
+
+    
+    <div class="d-flex justify-content-center mt-3 mb-1">
+        <a class="btn btn-primary" data-toggle="collapse" href="#related" style="width: 500px;"><h4>Related Words (Top 10)</h4></a>
+    </div>    
+    <div id="related" class="panel-collapse collapse">
+        <div class="d-flex flex-wrap justify-content-center">
+            {% for item in Related_words_data %}
+            <button class="btn btn-info m-1">
+                {{ item['word'] }}
+                <span class="badge badge-primary badge-pill ml-1">{{ item['score'] }}</span><!--Score here-->
+            </button>
+            {% endfor %}
+        </div>
+
+        <!--Just to save the way I did it before-->
+        <script>
+            /*
+            <ul class="list-group list-group-horizontal mt-2">
+                {% for item in Related_words_data %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ item['word'] }}
+                        <span class="badge badge-primary badge-pill ml-1">{{ item['score'] }}</span><!--Score here-->
+                    </li><!--Here you can you list group with linked items in JS to search for the next word right away i guess. Find more https://www.w3schools.com/bootstrap4/bootstrap_list_groups.asp-->
+                {% endfor %}
+            </ul>
+            */
+        </script>
+    </div>
+
+    
+    <div class="d-flex justify-content-center mt-3 mb-1">
+        <a class="btn btn-primary" data-toggle="collapse" href="#concepts" style="width: 500px;"><h4>Related Concepts</h4></a>
+    </div>
+    <div id="concepts" class="panel-collapse collapse">
+        <ul class="list-group">
+            {% for i in range(relations_list_label|length) %}
+                <li class="list-group-item">
+                    <a href="#{{ relations_list_label[i] }}" data-toggle="collapse"><h5><strong>{{ word }} {{ real_relations_list_label_names[i] }}</strong></h5></a>
+                    <div id="{{ relations_list_label[i] }}" class="collapse">
+                        <div class="d-flex flex-wrap justify-content-center">
+                            {% for j in range(concept_network[relations_list_label[i]]|length) %}
+                            <!--Get the object with 4 fields start, end, weight, rel-->    
+                            <button class="btn btn-primary m-1">
+                                    {{ concept_network[relations_list_label[i]][j]['end']['label'] }}
+                                    <span class="badge badge-primary badge-pill ml-1">{{ concept_network[relations_list_label[i]][j]['weight'] }}</span><!--Score here-->
+                                </button>
+                            {% endfor %}
+                        </div>
+                        <script>
+                            /* Just to save how I used to do it
+                            <ul class="list-group list-group-horizontal mt-2">
+                                {% for j in range(concept_network[relations_list_label[i]]|length) %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        {{ concept_network[relations_list_label[i]][j]['end']['label'] }}<!--Get the object with 4 fields start, end, weight, rel-->
+                                        <span class="badge badge-primary badge-pill ml-1">{{ concept_network[relations_list_label[i]][j]['weight'] }}</span><!--Score here-->
+                                    </li><!--Here you can you list group with linked items in JS to search for the next word right away i guess. Find more https://www.w3schools.com/bootstrap4/bootstrap_list_groups.asp-->
+                                    
+                                {% endfor %}
+                            </ul>*/
+                        </script>
+                        
+                    </div>
+                </li>
+                
+            {% endfor %}
+        </ul>
+    </div>
+        
+    <!--Network goes here-->
+    <div class="d-flex justify-content-center mt-3">
+        <div id="mynetwork"></div>
+    </div>
+    
+    <script>
+        /* Testing stuff
+        var myvar = {{ x }};
+        alert('x is {{ x }}');
+        var myvar2 = 30;
+        var abc = myvar2.toString();
+        */
+
+        // create an array with nodes
+        var nodes = new vis.DataSet([
+            {id: '{{ word }}', label: '{{ word }}'},
+            {% for item in Related_words_data %}
+                {id: '{{ item['word'] }}', label: '{{ item['word'] }}'},
+            {% endfor %}
+        ]);
+
+        // create an array with edges
+        var edges = new vis.DataSet([
+            {% for item in Related_words_data %}
+                {from: '{{ word }}', to: '{{ item['word'] }}'},
+            {% endfor %}
+            
+        ]);
+
+        // create a network
+        var container = document.getElementById('mynetwork');
+
+        // provide the data in the vis format
+        var data = {
+            nodes: nodes,
+            edges: edges
+        };
+        var options = {
+        interaction: {
+            dragNodes: true
+        }
+        };
+
+        // initialize your network!
+        var network = new vis.Network(container, data, options);
+
+        // Detect interaction
+        network.on("click", function (params) {
+            /*params.event = "[original event]";
+            document.getElementById('eventSpan').innerHTML = '<h2>Click event:</h2>' + JSON.stringify(params, null, 4);
+            console.log('click event, getNodeAt returns: ' + this.getNodeAt(params.pointer.DOM));
+            alert(`You click on ${params.nodes}`);*/
+
+            // Construct redirect
+            var url_to_go_network = `/synonyms?word=${params.nodes}`;
+
+            // redirect to url above
+            document.location.href = url_to_go_network;
+
+        });
+    </script>
+
+    <!-- Just testing JS
+    <button onclick="alert(`x is ${myvar+2} and ${myvar}`);">click me</button>
+    <button onclick="alert('string is {{ z }}');">show string</button>
+   
+    <button id="testjs">Test</button>-->
+
+    <!--Just some whitespace at the end-->
+
+    <pre id="eventSpan"></pre>
+
+    <p></p>
+{% endblock %}
