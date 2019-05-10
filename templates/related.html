@@ -136,7 +136,11 @@
     
     <div id="synonyms" class="panel-collapse collapse">
         <div class="d-flex flex-wrap justify-content-center">
-            <div class="alert alert-warning">No thesaurus results for word '{{ word }}'. Did you mean '<a class="errorRedirect" href="/navbarSearch?word={{ word_suggest }}">{{ word_suggest }}</a>'?</div>
+            {% if word_suggest != "" %}
+                <div class="alert alert-warning">No thesaurus results for word '{{ word }}'. Did you mean '<a class="errorRedirect" href="/navbarSearch?word={{ word_suggest }}">{{ word_suggest }}</a>'?</div>
+            {% else %}
+                <div class="alert alert-warning">Word not found. Please check again.</div>
+            {% endif %}
         </div>        
     </div>
 

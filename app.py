@@ -40,10 +40,15 @@ def synonyms():
     try:
         results = Word(word)
     except exceptions.MisspellingError as msplt:
+        session.clear()
         # return render_template("errorRedirect.html", error=msplt)
         session['mspltError'] = str(msplt)
         return redirect(f'/related?word={word}')
-    
+    except exceptions.WordNotFoundError as wnf:
+        session.clear()
+        session['wnf'] = str(wnf)
+        return redirect(f'/related?word={word}')
+
     results = Word(word)
     resultData = results.data
     # session['word'] = word # To reuse in "/result"
@@ -69,7 +74,7 @@ def synonyms():
         item['score'] = round(item['score'], 2)
 
     """GET RELATIONS"""
-    concepts = Relations(word)
+    concepts = Relations("_".join(word.split())) # For example, "eat    mice  " becomes "eat_mice"
     
     # Process data: Get the lists of relations id and relations label
     relations_list_id = []
@@ -168,7 +173,17 @@ def related():
     original_word = wordPath_list[0]
     
     """GET SYNONYMS"""
-    word_suggest = session['mspltError'].split("mean '")[1].split("'?")[0] # Get the word suggested after the error is shown
+    for key in session:
+        if key == 'mspltError':
+            word_suggest = session['mspltError'].split("mean '")[1].split("'?")[0]
+        else:
+            word_suggest = ''
+
+    # This is the old way, when we didn't have Word not found error exception        
+    """ if session['mspltError'] != '':
+        word_suggest = session['mspltError'].split("mean '")[1].split("'?")[0] # Get the word suggested after the error is shown
+    else:
+        word_suggest = '' """
 
     """GET RELATED WORDS"""
     # Result from helpers
@@ -183,7 +198,7 @@ def related():
         item['score'] = round(item['score'], 2)
 
     """GET RELATIONS"""
-    concepts = Relations(word)
+    concepts = Relations("_".join(word.split()))
     
     # Process data: Get the lists of relations id and relations label
     relations_list_id = []
@@ -210,6 +225,7 @@ def related():
         'HasA': 'has',
         'UsedFor': 'is used for',
         'CapableOf': 'is capable of',
+        'NotCapableOf': 'is not capable of',
         'AtLocation': 'can be found in',
         'Causes': 'can lead to',
         'HasSubevent': 'is followed by',
