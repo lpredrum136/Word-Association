@@ -156,10 +156,20 @@ def synonyms():
                 obj_to_append = dict((i, edge[i]) for i in ('start', 'end', 'rel', 'weight')) # Only take the important stuff
                 concept_network[item].append(obj_to_append)
 
+    # Problem: sometimes the word queried is 'start', other times it is 'end'
+    word_start_or_end = {}
+
+    for i in range(len(relations_list_label)):
+        for j in range(len(concept_network[relations_list_label[i]])):
+            if word in concept_network[relations_list_label[i]][j]['end']['label']:
+                word_start_or_end[relations_list_label[i]] = 'end'
+            else:
+                word_start_or_end[relations_list_label[i]] = 'start'
+
     # Return
     return render_template("results.html", partsOfSpeech=partsOfSpeech, definitions=definitions, synList=synList, numberOfOptions=numberOfOptions, \
         resultData=resultData, Related_words_data=Related_words_data, relations_list_label=relations_list_label, concept_network=concept_network, \
-            real_relations_list_label_names=real_relations_list_label_names, original_word=original_word, word=word, wordPath_list=wordPath_list)
+            real_relations_list_label_names=real_relations_list_label_names, word_start_or_end=word_start_or_end, original_word=original_word, word=word, wordPath_list=wordPath_list)
 
 @app.route("/related")
 def related():
@@ -281,9 +291,19 @@ def related():
                 obj_to_append = dict((i, edge[i]) for i in ('start', 'end', 'rel', 'weight')) # Only take the important stuff
                 concept_network[item].append(obj_to_append)
 
+    # Problem: sometimes the word queried is 'start', other times it is 'end'
+    word_start_or_end = {}
+
+    for i in range(len(relations_list_label)):
+        for j in range(len(concept_network[relations_list_label[i]])):
+            if word in concept_network[relations_list_label[i]][j]['end']['label']:
+                word_start_or_end[relations_list_label[i]] = 'end'
+            else:
+                word_start_or_end[relations_list_label[i]] = 'start'
+
     # Return
     return render_template("related.html", word_suggest=word_suggest, Related_words_data=Related_words_data, relations_list_label=relations_list_label, concept_network=concept_network, \
-            real_relations_list_label_names=real_relations_list_label_names, original_word=original_word, word=word, wordPath_list=wordPath_list)
+            real_relations_list_label_names=real_relations_list_label_names, word_start_or_end=word_start_or_end, original_word=original_word, word=word, wordPath_list=wordPath_list)
 
 @app.route("/aboutUs")
 def aboutUs():

@@ -234,31 +234,47 @@
         <ul class="list-group">
             {% for i in range(relations_list_label|length) %}
                 <li class="list-group-item">
-                    <a href="#{{ relations_list_label[i] }}" data-toggle="collapse"><h5><strong>{{ word }} {{ real_relations_list_label_names[i] }}</strong></h5></a>
-                    <div id="{{ relations_list_label[i] }}" class="collapse">
-                        <div class="d-flex flex-wrap justify-content-center">
-                            {% for j in range(concept_network[relations_list_label[i]]|length) %}
-                            <!--Get the object with 4 fields start, end, weight, rel-->    
-                            <button class="btn btn-primary m-1">
-                                    {{ concept_network[relations_list_label[i]][j]['end']['label'] }}
-                                    <span class="badge badge-primary badge-pill ml-1">{{ concept_network[relations_list_label[i]][j]['weight'] }}</span><!--Score here-->
-                                </button>
-                            {% endfor %}
-                        </div>
-                        <script>
-                            /* Just to save how I used to do it
-                            <ul class="list-group list-group-horizontal mt-2">
+                    {% if word_start_or_end[relations_list_label[i]] == 'start' %}
+                        <a href="#{{ relations_list_label[i] }}" data-toggle="collapse"><h5><strong>{{ word }} {{ real_relations_list_label_names[i] }}</strong></h5></a>
+                        <div id="{{ relations_list_label[i] }}" class="collapse">
+                            <div class="d-flex flex-wrap justify-content-center">
                                 {% for j in range(concept_network[relations_list_label[i]]|length) %}
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        {{ concept_network[relations_list_label[i]][j]['end']['label'] }}<!--Get the object with 4 fields start, end, weight, rel-->
+                                <!--Get the object with 4 fields start, end, weight, rel-->    
+                                <button class="btn btn-primary m-1">
+                                        {{ concept_network[relations_list_label[i]][j]['end']['label'] }}
                                         <span class="badge badge-primary badge-pill ml-1">{{ concept_network[relations_list_label[i]][j]['weight'] }}</span><!--Score here-->
-                                    </li><!--Here you can you list group with linked items in JS to search for the next word right away i guess. Find more https://www.w3schools.com/bootstrap4/bootstrap_list_groups.asp-->
-                                    
+                                    </button>
                                 {% endfor %}
-                            </ul>*/
-                        </script>
-                        
-                    </div>
+                            </div>
+                            <script>
+                                /* Just to save how I used to do it
+                                <ul class="list-group list-group-horizontal mt-2">
+                                    {% for j in range(concept_network[relations_list_label[i]]|length) %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            {{ concept_network[relations_list_label[i]][j]['end']['label'] }}<!--Get the object with 4 fields start, end, weight, rel-->
+                                            <span class="badge badge-primary badge-pill ml-1">{{ concept_network[relations_list_label[i]][j]['weight'] }}</span><!--Score here-->
+                                        </li><!--Here you can you list group with linked items in JS to search for the next word right away i guess. Find more https://www.w3schools.com/bootstrap4/bootstrap_list_groups.asp-->
+                                        
+                                    {% endfor %}
+                                </ul>*/
+                            </script>
+                            
+                        </div>
+                    {% else %}
+                        <a href="#{{ relations_list_label[i] }}" data-toggle="collapse"><h5><strong>_____ {{ real_relations_list_label_names[i] }} {{ word }}</strong></h5></a>
+                        <div id="{{ relations_list_label[i] }}" class="collapse">
+                            <div class="d-flex flex-wrap justify-content-center">
+                                {% for j in range(concept_network[relations_list_label[i]]|length) %}
+                                <!--Get the object with 4 fields start, end, weight, rel-->    
+                                <button class="btn btn-primary m-1">
+                                        {{ concept_network[relations_list_label[i]][j]['start']['label'] }}
+                                        <span class="badge badge-primary badge-pill ml-1">{{ concept_network[relations_list_label[i]][j]['weight'] }}</span><!--Score here-->
+                                    </button>
+                                {% endfor %}
+                            </div>
+                            
+                        </div>
+                    {% endif %}
                 </li>
                 
             {% endfor %}
