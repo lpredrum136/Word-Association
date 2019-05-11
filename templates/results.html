@@ -289,15 +289,14 @@
     <script>
         // create an array with nodes
         var nodes = new vis.DataSet([
-            {id: '{{ word }}', label: '{{ word }}'},// The root word
-            {id: 2, label: 'a'},
+            {id: '{{ word }}', label: '{{ word }}', font: {size: 40, strokeWidth: 3, strokeColor: 'black'}},// The root word
             {% for i in range(numberOfOptions) %}// The parts of speech
-                {id: '{{ definitions[i] }}', label: '{{ partsOfSpeech[i] }}', title: '{{ definitions[i] }}'},
+                {id: '{{ definitions[i] }}', label: '{{ partsOfSpeech[i] }}', title: '{{ definitions[i] }}', font: {size: 30, strokeWidth: 3, strokeColor: 'black'}},
                 {% for j in range(synList[i]|length) %}
                     {% if resultData[i]['syn'][j][1] == 3 %}
-                        {id: '{{ definitions[i] }}{{ synList[i][j] }}', label: '{{ synList[i][j] }}', color: 'blue'},
+                        {id: '{{ definitions[i] }}{{ synList[i][j] }}', label: '{{ synList[i][j] }}', color: '#0275D8'},
                     {% elif resultData[i]['syn'][j][1] == 2 %}
-                        {id: '{{ definitions[i] }}{{ synList[i][j] }}', label: '{{ synList[i][j] }}', color: 'green'},
+                        {id: '{{ definitions[i] }}{{ synList[i][j] }}', label: '{{ synList[i][j] }}', color: '#5BC0DE'},
                     {% else %}
                         {id: '{{ definitions[i] }}{{ synList[i][j] }}', label: '{{ synList[i][j] }}', color: 'gray'},
                     {% endif %}
@@ -312,8 +311,7 @@
                 {% for j in range(synList[i]|length) %}
                     {from: '{{ definitions[i] }}', to: '{{ definitions[i] }}{{ synList[i][j] }}'},
                 {% endfor %}
-            {% endfor %}
-            {from: '{{ word }}', to: 2}           
+            {% endfor %}                    
         ]);
 
         // create a network
@@ -327,6 +325,11 @@
         var options = {
             interaction: {
                 dragNodes: true
+            },
+            nodes: {
+                font: {
+                    color: '#F9F9F9'
+                }
             }
         };
 
