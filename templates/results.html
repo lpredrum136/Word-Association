@@ -294,11 +294,11 @@
                 {id: '{{ definitions[i] }}', label: '{{ partsOfSpeech[i] }}', title: '{{ definitions[i] }}', font: {size: 30, strokeWidth: 3, strokeColor: 'black'}},
                 {% for j in range(synList[i]|length) %}
                     {% if resultData[i]['syn'][j][1] == 3 %}
-                        {id: '{{ definitions[i] }}{{ synList[i][j] }}', label: '{{ synList[i][j] }}', color: '#0275D8'},
+                        {id: '{{ definitions[i] }}!{{ synList[i][j] }}', label: '{{ synList[i][j] }}', color: '#0275D8'},
                     {% elif resultData[i]['syn'][j][1] == 2 %}
-                        {id: '{{ definitions[i] }}{{ synList[i][j] }}', label: '{{ synList[i][j] }}', color: '#5BC0DE'},
+                        {id: '{{ definitions[i] }}!{{ synList[i][j] }}', label: '{{ synList[i][j] }}', color: '#5BC0DE'},
                     {% else %}
-                        {id: '{{ definitions[i] }}{{ synList[i][j] }}', label: '{{ synList[i][j] }}', color: 'gray'},
+                        {id: '{{ definitions[i] }}!{{ synList[i][j] }}', label: '{{ synList[i][j] }}', color: 'gray'},
                     {% endif %}
                 {% endfor %}
             {% endfor %}                    
@@ -309,7 +309,7 @@
             {% for i in range(numberOfOptions) %}
                 {from: '{{ word }}', to: '{{ definitions[i] }}'},
                 {% for j in range(synList[i]|length) %}
-                    {from: '{{ definitions[i] }}', to: '{{ definitions[i] }}{{ synList[i][j] }}'},
+                    {from: '{{ definitions[i] }}', to: '{{ definitions[i] }}!{{ synList[i][j] }}'},
                 {% endfor %}
             {% endfor %}                    
         ]);
@@ -340,11 +340,14 @@
         network.on("click", function (params) {
             /*params.event = "[original event]";
             document.getElementById('eventSpan').innerHTML = '<h2>Click event:</h2>' + JSON.stringify(params, null, 4);
-            console.log('click event, getNodeAt returns: ' + this.getNodeAt(params.pointer.DOM));
-            alert(`You click on ${params.nodes}`);*/
+            console.log('click event, getNodeAt returns: ' + this.getNodeAt(params.pointer.DOM));*/
+            // alert(`You click on ${params.nodes}`);
+
+            // Construct parameter (word) to be pumped into the redirect link below
+            var parameter = params.nodes[0].split('!')[1];
 
             // Construct redirect
-            var url_to_go_network = `/synonyms?word=${params.nodes}`;
+            var url_to_go_network = `/synonyms?word=${parameter}`;
 
             // redirect to url above
             document.location.href = url_to_go_network;
