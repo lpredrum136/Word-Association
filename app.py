@@ -174,6 +174,7 @@ def synonyms():
 @app.route("/related")
 def related():
     """In case misspelling error of the queried word, which return no synonyms"""
+    # Clear word path because it doesn't mean anything now
 
     """QUERY"""
     word = request.args.get("word")
