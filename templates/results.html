@@ -150,7 +150,7 @@
             {% for i in range(numberOfOptions) %}
                 <li class="list-group-item bg-muted">
                     <a href="#{{ partsOfSpeech[i] }}{{ i }}" data-toggle="collapse"><h5><strong>({{ partsOfSpeech[i] }}). {{ definitions[i] }}</strong></h5></a>
-                    <div id="{{ partsOfSpeech[i] }}{{ i }}" class="collapse">
+                    <div id="{{ partsOfSpeech[i] }}{{ i }}" class="collapse wordToLook">
                         <div class="d-flex flex-wrap justify-content-center">
                             {% for j in range(synList[i]|length) %}
                                 {% if resultData[i]['syn'][j][1] == 3 %}<!--Set color according to score-->
@@ -294,11 +294,11 @@
                 {id: '{{ definitions[i] }}', label: '{{ partsOfSpeech[i] }}', title: '{{ definitions[i] }}', font: {size: 30, strokeWidth: 3, strokeColor: 'black'}},
                 {% for j in range(synList[i]|length) %}
                     {% if resultData[i]['syn'][j][1] == 3 %}
-                        {id: '{{ definitions[i] }}!{{ synList[i][j] }}', label: '{{ synList[i][j] }}', color: '#0275D8'},
+                        {id: '{{ partsOfSpeech[i] }}?{{ definitions[i] }}!{{ synList[i][j] }}', label: '{{ synList[i][j] }}', color: '#0275D8'},
                     {% elif resultData[i]['syn'][j][1] == 2 %}
-                        {id: '{{ definitions[i] }}!{{ synList[i][j] }}', label: '{{ synList[i][j] }}', color: '#5BC0DE'},
+                        {id: '{{ partsOfSpeech[i] }}?{{ definitions[i] }}!{{ synList[i][j] }}', label: '{{ synList[i][j] }}', color: '#5BC0DE'},
                     {% else %}
-                        {id: '{{ definitions[i] }}!{{ synList[i][j] }}', label: '{{ synList[i][j] }}', color: 'gray'},
+                        {id: '{{ partsOfSpeech[i] }}?{{ definitions[i] }}!{{ synList[i][j] }}', label: '{{ synList[i][j] }}', color: 'gray'},
                     {% endif %}
                 {% endfor %}
             {% endfor %}                    
@@ -309,7 +309,7 @@
             {% for i in range(numberOfOptions) %}
                 {from: '{{ word }}', to: '{{ definitions[i] }}'},
                 {% for j in range(synList[i]|length) %}
-                    {from: '{{ definitions[i] }}', to: '{{ definitions[i] }}!{{ synList[i][j] }}'},
+                    {from: '{{ definitions[i] }}', to: '{{ partsOfSpeech[i] }}?{{ definitions[i] }}!{{ synList[i][j] }}'},
                 {% endfor %}
             {% endfor %}                    
         ]);
@@ -336,7 +336,7 @@
         // initialize your network!
         var network = new vis.Network(container, data, options);
 
-        // Detect interaction
+        // Detect interaction and do the same thing as you click on the #synonyms part
         network.on("click", function (params) {
             /*params.event = "[original event]";
             document.getElementById('eventSpan').innerHTML = '<h2>Click event:</h2>' + JSON.stringify(params, null, 4);
@@ -345,9 +345,39 @@
 
             // Construct parameter (word) to be pumped into the redirect link below
             var parameter = params.nodes[0].split('!')[1];
+            var definition_to_look = params.nodes[0].split('?')[1].split('!')[0];
 
             // Construct redirect
             var url_to_go_network = `/synonyms?word=${parameter}`;
+
+            // alert(`go to ${parameter}`);
+
+            // find the word in the Synonyms section
+            var scope_to_look = $('#synonyms .btn.m-1');
+            var word_to_compare, definition_to_compare;
+            
+            for (var i = 0; i < scope_to_look.length; i++) {
+                definition_to_compare = scope_to_look.eq(i).parents('div.wordToLook').siblings().html().split('. ')[1].split('</')[0];// Select the word to be compared
+                word_to_compare = $.trim(scope_to_look.eq(i).html().split('<span')[0]);// You cannot do scope_to_look[i].parents() because parents is a jQ method. It only
+                // works on a jQ object, while scope_to_look[i] is just a DOM element. eq() will get the DOM element and turn it into a jQ object.
+                // Find out more: https://stackoverflow.com/questions/31306778/jquery-html-function-not-working/31306861
+                if (parameter == word_to_compare && definition_to_look == definition_to_compare) {
+                    var score_to_add = scope_to_look.eq(i).html().split('ml-1">')[1].split('</span>')[0]; // get the score of the word
+
+                    // Save the score (not accumulate)
+                    localStorage.setItem("scoreToAdd", score_to_add);
+
+                    break;
+                }
+            }
+
+            /* JUST TESTING JQUERY HTML() VS JS INNERHTML
+            var scope_to_look = $('#synonyms .btn.m-1');
+            var xyz = scope_to_look.eq(0).html(); //eq(0) holy mother of god. See below to see innerHTML and jQ.html() is not the same
+            // https://stackoverflow.com/questions/31306778/jquery-html-function-not-working/31306861
+
+            alert(`scope is ${xyz}`);*/
+            
 
             // redirect to url above
             document.location.href = url_to_go_network;
