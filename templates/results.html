@@ -123,8 +123,16 @@
         </form>
     </div>
      
-    <!--Test score to add-->
-    <!-- <div id="scoreToAdd"></div> -->
+    <!--Quick alert-->
+    <div class="d-flex flex-wrap justify-content-center mb-0 mt-2">
+        <div class="alert alert-warning alert-dismissible fade show py-1 pl-1 pr-5 text-center">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            These are the
+            <button class="btn btn-primary m-1 d-inline-block">closest</button>, 
+            <button class="btn btn-info m-1 d-inline-block">second-closest</button> and 
+            <button class="btn btn-secondary m-1 d-inline-block">furthest</button> associated word for the current word.<br>To further understand the results, see <a href="/interpret"><strong>Interpret the Result</strong></a>
+        </div>
+    </div>
 
     <!--Main part-->
     <div class="panel-group">
@@ -133,17 +141,6 @@
             <a class="btn btn-primary" data-toggle="collapse" href="#synonyms" style="width: 500px;"><h4>Synonyms</h4></a>
         </div>
 
-        <div class="d-flex flex-wrap justify-content-center mb-0">
-            <div class="alert alert-warning alert-dismissible fade show py-1 pl-1 pr-5">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                These are the
-                <button class="btn btn-primary m-1 d-inline-block">closest synonym</button>, 
-                <button class="btn btn-info m-1 d-inline-block">second-closest synonym</button> and 
-                <button class="btn btn-secondary m-1 d-inline-block">furthest synonym</button> for the current word.
-            </div>
-        </div>
-        
-        
         <div id="synonyms" class="panel-collapse collapse">
             <ul class="list-group">
                 {% for i in range(numberOfOptions) %}
@@ -187,10 +184,22 @@
         <div id="related" class="panel-collapse collapse">
             <div class="d-flex flex-wrap justify-content-center">
                 {% for item in Related_words_data %}
-                <button class="btn btn-info m-1">
-                    {{ item['word'] }}
-                    <span class="badge badge-primary badge-pill ml-1">{{ item['score'] }}</span><!--Score here-->
-                </button>
+                    {% if item['score'] >= 10 %}
+                        <button class="btn btn-primary m-1">
+                            {{ item['word'] }}
+                            <span class="badge badge-warning badge-pill ml-1">{{ item['score'] }}</span><!--Score here-->
+                        </button>
+                    {% elif item['score'] >= 5 and item['score'] < 10 %}
+                        <button class="btn btn-info m-1">
+                            {{ item['word'] }}
+                            <span class="badge badge-warning badge-pill ml-1">{{ item['score'] }}</span><!--Score here-->
+                        </button>
+                    {% else %}
+                        <button class="btn btn-secondary m-1">
+                            {{ item['word'] }}
+                            <span class="badge badge-warning badge-pill ml-1">{{ item['score'] }}</span><!--Score here-->
+                        </button>
+                    {% endif %}
                 {% endfor %}
             </div>
 
@@ -210,26 +219,30 @@
                             <div id="{{ relations_list_label[i] }}" class="collapse">
                                 <div class="d-flex flex-wrap justify-content-center">
                                     {% for j in range(concept_network[relations_list_label[i]]|length) %}
-                                    <!--Get the object with 4 fields start, end, weight, rel-->    
-                                    <button class="btn btn-primary m-1">
-                                            {{ concept_network[relations_list_label[i]][j]['end']['label'] }}
-                                            <span class="badge badge-primary badge-pill ml-1">{{ concept_network[relations_list_label[i]][j]['weight'] }}</span><!--Score here-->
-                                        </button>
+                                    <!--Get the object with 4 fields start, end, weight, rel-->
+                                        {% if concept_network[relations_list_label[i]][j]['weight'] > 2 %}
+                                            <button class="btn btn-primary m-1">
+                                                {{ concept_network[relations_list_label[i]][j]['end']['label'] }}
+                                                <span class="badge badge-warning badge-pill ml-1">{{ concept_network[relations_list_label[i]][j]['weight'] }}</span><!--Score here-->
+                                            </button>
+                                        {% elif concept_network[relations_list_label[i]][j]['weight'] <= 2 and concept_network[relations_list_label[i]][j]['weight'] > 1 %}
+                                            <button class="btn btn-info m-1">
+                                                {{ concept_network[relations_list_label[i]][j]['end']['label'] }}
+                                                <span class="badge badge-warning badge-pill ml-1">{{ concept_network[relations_list_label[i]][j]['weight'] }}</span><!--Score here-->
+                                            </button>
+                                        {% else %}
+                                            <button class="btn btn-secondary m-1">
+                                                {% if relations_list_label[i] == "ExternalURL" %}
+                                                    {{ concept_network[relations_list_label[i]][j]['end']['site'] }}
+                                                    <span class="badge badge-success badge-pill ml-1"><a href="{{ concept_network[relations_list_label[i]][j]['end']['term'] }}" target="_blank" class="text-white">Go to site</a></span>
+                                                {% else %}
+                                                    {{ concept_network[relations_list_label[i]][j]['end']['label'] }}
+                                                {% endif %}
+                                                <span class="badge badge-warning badge-pill ml-1">{{ concept_network[relations_list_label[i]][j]['weight'] }}</span><!--Score here-->
+                                            </button>
+                                        {% endif %}
                                     {% endfor %}
                                 </div>
-                                <script>
-                                    /* Just to save how I used to do it
-                                    <ul class="list-group list-group-horizontal mt-2">
-                                        {% for j in range(concept_network[relations_list_label[i]]|length) %}
-                                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                {{ concept_network[relations_list_label[i]][j]['end']['label'] }}<!--Get the object with 4 fields start, end, weight, rel-->
-                                                <span class="badge badge-primary badge-pill ml-1">{{ concept_network[relations_list_label[i]][j]['weight'] }}</span><!--Score here-->
-                                            </li><!--Here you can you list group with linked items in JS to search for the next word right away i guess. Find more https://www.w3schools.com/bootstrap4/bootstrap_list_groups.asp-->
-                                            
-                                        {% endfor %}
-                                    </ul>*/
-                                </script>
-                                
                             </div>
                         {% else %}
                             <a href="#{{ relations_list_label[i] }}" data-toggle="collapse"><h5><strong>_____ {{ real_relations_list_label_names[i] }} {{ word }}</strong></h5></a>
@@ -237,10 +250,27 @@
                                 <div class="d-flex flex-wrap justify-content-center">
                                     {% for j in range(concept_network[relations_list_label[i]]|length) %}
                                     <!--Get the object with 4 fields start, end, weight, rel-->    
-                                    <button class="btn btn-primary m-1">
-                                            {{ concept_network[relations_list_label[i]][j]['start']['label'] }}
-                                            <span class="badge badge-primary badge-pill ml-1">{{ concept_network[relations_list_label[i]][j]['weight'] }}</span><!--Score here-->
-                                        </button>
+                                        {% if concept_network[relations_list_label[i]][j]['weight'] > 2 %}
+                                            <button class="btn btn-primary m-1">
+                                                {{ concept_network[relations_list_label[i]][j]['start']['label'] }}
+                                                <span class="badge badge-warning badge-pill ml-1">{{ concept_network[relations_list_label[i]][j]['weight'] }}</span><!--Score here-->
+                                            </button>
+                                        {% elif concept_network[relations_list_label[i]][j]['weight'] <= 2 and concept_network[relations_list_label[i]][j]['weight'] > 1 %}
+                                            <button class="btn btn-info m-1">
+                                                {{ concept_network[relations_list_label[i]][j]['start']['label'] }}
+                                                <span class="badge badge-warning badge-pill ml-1">{{ concept_network[relations_list_label[i]][j]['weight'] }}</span><!--Score here-->
+                                            </button>
+                                        {% else %}
+                                            <button class="btn btn-secondary m-1">
+                                                {% if relations_list_label[i] == "ExternalURL" %}
+                                                    {{ concept_network[relations_list_label[i]][j]['start']['site'] }}
+                                                    <span class="badge badge-success badge-pill ml-1"><a href="{{ concept_network[relations_list_label[i]][j]['end']['term'] }}" target="_blank" class="text-white">Go to site</a></span>
+                                                {% else %}
+                                                    {{ concept_network[relations_list_label[i]][j]['start']['label'] }}
+                                                {% endif %}
+                                                <span class="badge badge-warning badge-pill ml-1">{{ concept_network[relations_list_label[i]][j]['weight'] }}</span><!--Score here-->
+                                            </button>
+                                        {% endif %}
                                     {% endfor %}
                                 </div>
                                 

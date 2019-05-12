@@ -42,7 +42,19 @@ $(document).ready(function() {
         // alert('You click on ' + this.innerHTML.split('<span')[0]);        
     });
 
+    // Click in #related also go to new page
     $('#related .btn.m-1').click(function() {
+        var url_to_go = `/navbarSearch?word=${$.trim(this.innerHTML.split('<span')[0])}`; // get the word only and construct to redirect url
+        
+        // Clear localstorage because user stray on another path
+        localStorage.clear();
+
+        // redirect to url above
+        document.location.href = url_to_go;
+    });
+
+    // Click in #concepts also go to new page
+    $('#concepts .btn.m-1').click(function() {
         var url_to_go = `/navbarSearch?word=${$.trim(this.innerHTML.split('<span')[0])}`; // get the word only and construct to redirect url
         
         // Clear localstorage because user stray on another path
@@ -166,4 +178,10 @@ $(document).ready(function() {
             $('#navbarSearchButton').attr('disabled', true);
         }
     });
+
+    // In #concepts, click on an external link will render the button unclickable
+    var external_links = $('#concepts .badge-success');
+    for (var i = 0; i < external_links.length; i++) {
+        parent_node = external_links.eq(i).parent().off('click');
+    }
 });
