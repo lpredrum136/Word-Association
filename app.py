@@ -29,7 +29,7 @@ def index():
 @app.route("/synonyms")
 def synonyms():
     """QUERY"""
-    word = request.args.get("word")
+    word = request.args.get("word").lower()
 
     if word not in wordPath_list:
         wordPath_list.append(word) # To create word path
@@ -73,7 +73,7 @@ def synonyms():
     for item in Related_words_data:
         item['score'] = round(item['score'], 2)
 
-    """GET RELATIONS"""
+    """GET RELATED CONCEPTS"""
     concepts = Relations("_".join(word.split())) # For example, "eat    mice  " becomes "eat_mice"
     
     # Process data: Get the lists of relations id and relations label
@@ -177,7 +177,7 @@ def related():
     # Clear word path because it doesn't mean anything now
 
     """QUERY"""
-    word = request.args.get("word")
+    word = request.args.get("word").lower()
 
     if word not in wordPath_list:
         wordPath_list.append(word) # To create word path
