@@ -6,7 +6,7 @@ def RelatedWords(word):
     response_in_JSON = response.json()
     for item in response_in_JSON:
         item.pop("from")
-    return response_in_JSON[:20]
+    return response_in_JSON[:40]
 
 def Relations(word):
     obj = requests.get(f'http://api.conceptnet.io/c/en/{word}?limit=2000').json()

@@ -308,11 +308,11 @@ def related():
 
 @app.route("/aboutUs")
 def aboutUs():
-    return "abc"
+    return render_template("about.html")
 
 @app.route("/interpret")
 def interpret():
-    return "Interpret"
+    return render_template("interpret.html")
 
 @app.route("/navbarSearch")
 def navbarSearch():

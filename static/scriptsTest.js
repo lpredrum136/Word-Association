@@ -28,7 +28,7 @@ $(document).ready(function() {
         var url_to_go = `/synonyms?word=${$.trim(this.innerHTML.split('<span')[0])}`; // get the word only and construct to redirect url
         scoreToAdd = this.innerHTML.split('ml-1">')[1].split('</span>')[0]; // get the score of the word
 
-        alert(`Score is ${scoreToAdd}`);
+        // alert(`Score is ${scoreToAdd}`);
 
         // Save the score (not accumulate)
         localStorage.setItem("scoreToAdd", scoreToAdd);

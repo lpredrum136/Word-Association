@@ -1,0 +1,124 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <nav class="navbar navbar-expand-sm bg-primary navbar-dark sticky-top mb-2 py-0"><!-- A grey horizontal navbar that becomes vertical on small screens -->
+        <!-- Brand/logo -->
+        <a class="navbar-brand" href="/">
+            <img src="/static/qut.png" alt="QUT" style="width: 40px;">
+        </a>
+        <!--Toggler/Collapsible button-->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <!--Navbar Links-->
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/aboutUs">About the Project</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/interpret">How it works</a>
+                </li>
+            </ul>
+        </div>
+        <!--Navbar form - Search a new word, reset word path -->
+        <form class="form-inline" action="/navbarSearch" method="GET" id="navbarSearchForm">
+            <input class="form-control mr-sm-2" type="text" name="word" placeholder="Enter a word" id="navbarSearch">
+            <!--<button class="btn btn-success" type="submit">Search</button>-->
+            <!--Modal: Button to open the modal, ask if user want to continue, because word path will be reset-->
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#resetWarning" id="navbarSearchButton">
+                Search
+            </button>
+        </form>
+    </nav>
+
+    <!--The modal for the above form, with Fade-->
+    <div class="modal fade" id="resetWarning">
+        <div class="modal-dialog modal-dialog-centered"><!--Modal at the center of page-->
+            <div class="modal-content">
+                <!--Modal header-->
+                <div class="modal-header">
+                    <h4 class="modal-title">Warning: Word path reset?</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <!--Modal body-->
+                <div class="modal-body">
+                    You are effectively deleting your current word path and starting a new search. Proceed?
+                </div>
+                <!--Modal footer-->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="navbarSearchProceed">Yes</button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex flex-wrap justify-content-center">
+        <p>
+            <h2 class="text-primary"><strong>How it works?</strong></h2>
+        </p>
+    </div>
+    
+    <p>
+        Start by typing a word at <a href="/">Home Page</a> and click <button class="btn btn-success">Search</button><br>
+        <div class="d-flex flex-wrap justify-content-center mt-1 mb-2">
+            <img src="/static/homepage.jpg" style="width: 30%;">
+        </div>
+
+        You will be taken to the results. In this page, on top is the <span class="badge badge-warning badge-pill">original word</span>, 
+        i.e. the word you have entered, and the <span class="badge badge-warning badge-pill">current word</span>.<br>
+        <div class="d-flex flex-wrap justify-content-center mt-1 mb-2">
+            <img src="/static/originalandcurrent.jpg" style="width: 30%;">
+        </div>
+
+        Click on <button class="btn btn-primary">Synonyms</button> to view the synonyms for the word you entered.
+        These synonyms are categorised into <strong class="text-primary">parts of speech</strong> as well as <strong class="text-primary">definitions</strong> of the word.<br>
+        <div class="d-flex flex-wrap justify-content-center mt-1 mb-2">
+            <img src="/static/synonyms.jpg" style="width: 70%;">
+        </div>
+
+        You can also click on <button class="btn btn-primary">Related Words</button> and <button class="btn btn-primary">Related Concepts</button> to
+        reveal other associations beside synonymy above. The reason for these functionalities can be found in <a href="/aboutUs">About the Project</a>
+        <div class="d-flex flex-wrap justify-content-center mt-1 mb-2">
+            <img src="/static/related.jpg" style="width: 70%;">
+        </div>
+
+        Now back to the list of synonyms, click on any word, for example <button class="btn btn-primary">home<span class="badge badge-warning badge-pill ml-1">1</span></button>.
+        You will be taken to a new page that returns the results for the current word 
+            <button type="button" class="btn btn-primary" disabled>
+                <strong>home</strong>
+                <span class="badge badge-warning badge-pill">current</span>
+            </button>.
+        You will notice the <span class="badge badge-warning badge-pill">original word</span> and the <span class="badge badge-warning badge-pill">current word</span> have been 
+        updated on top of the page.
+        <div class="d-flex flex-wrap justify-content-center mt-1 mb-2">
+            <img src="/static/home.jpg" style="width: 70%;">
+        </div>
+
+        Also, there is now a <button class="btn btn-primary">Word Path</button> right below, showing the chain of words you have traversed.
+        <div class="d-flex flex-wrap justify-content-center mt-1 mb-2">
+            <img src="/static/wordpath.jpg" style="width: 20%;">
+        </div>
+
+        Continue by clicking on another word, this time <button class="btn btn-info">family <span class="badge badge-warning badge-pill ml-1">2</span></button>. You
+        will see along with the <span class="badge badge-warning badge-pill">original word</span> and the <span class="badge badge-warning badge-pill">current word</span> being 
+        updated, the new word has also been appended to the <button class="btn btn-primary">Word Path</button>.
+        <div class="d-flex flex-wrap justify-content-center mt-1 mb-2">
+            <img src="/static/updatewordpath.jpg" style="width: 20%;">
+        </div>
+
+        You are now able to jump back and forth in your word path, which effectively takes you back or forth to any word you have entered. 
+        As you do so, notice the <span class="badge badge-warning badge-pill">original word</span> and the <span class="badge badge-warning badge-pill">current word</span> being 
+        updated. The <button class="btn btn-primary">Word Path</button> is also highlighted to indicate where you currently are in your word path.
+        <div class="d-flex flex-wrap justify-content-center mt-1 mb-2">
+            <img src="/static/traverse.jpg" style="width: 20%;">
+        </div>
+
+        Click on <button class="btn btn-warning">Reset Word Path</button>, on the QUT logo <img src="/static/qut.png" style="width: 3%;">, or the <button class="btn btn-success">Quick Search</button> bar to reset your word path, i.e. start a new search.
+        <div class="d-flex flex-wrap justify-content-center mt-1 mb-2">
+            <img src="/static/reset.jpg" style="width: 70%;">
+        </div>
+    </p>
+
+{% endblock %}
